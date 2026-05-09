@@ -7,11 +7,12 @@ public abstract class Zone implements Activable {
     protected Collection<Capteur> all_capteurs;
     protected STATUS status;
     protected Hist_Prod historique_prod;
+    protected static int cpt = 0 ; 
 
 
     //getters / setters
     public int getCode() { return code; }
-    public void setCode(int code) { this.code = code; }
+    
 
     public String getNom() { return nom; }
     public void setNom(String nom) { this.nom = nom; }
@@ -24,8 +25,8 @@ public abstract class Zone implements Activable {
 
 
     //constructeur
- Zone(int code, String nom) {
-    this.code = code;
+ public Zone(String nom) {
+    this.code = cpt; cpt++ ; 
     this.nom = nom;
     this.status = STATUS.ACTIF;
     this.all_capteurs = new ArrayList<>();
@@ -39,6 +40,7 @@ public abstract class Zone implements Activable {
             }
         }
     }
+
     public void suspendre() {
         this.status = STATUS.SUSP;
         for (Capteur c : all_capteurs) {
@@ -56,7 +58,7 @@ public void ajouter_capteur(Capteur c) {
 }
 //Enregistre une production dans l'historique de la zone.
 public void ajouter_prod(Prod p) {
-    historique_prod.Engistrer_Prod(p);
+    historique_prod.Enregistrer_Prod(p);
 }
 
 //Retourne un tableau texte de tous les relevés des capteurs de la zone.
@@ -64,13 +66,31 @@ public void ajouter_prod(Prod p) {
     public String tableau_releve() {
         StringBuilder sb = new StringBuilder();
         sb.append("=== Relevés Zone [").append(nom).append("] ===\n");
-        for (Capteur c : all_capteurs) {
+
+        /*for (Capteur c : all_capteurs) {
             sb.append(c.toString()).append("\n");
-        }
+        }*/
+
+        for (Capteur c : all_capteurs){
+            if (c instanceof Num){
+                for(Releve r :  ((Num) c).getHistorique_releve().getContent()){
+                    sb.append(r.display_releve()).append("\n");
+                }
+                
+            }
+            else if (c instanceof GPS){
+                for(Releve_GPS r :  ((GPS) c).getHist_releve_gps().getContent()){
+                    sb.append(r.display_releve_gps()).append("\n");
+                }
+            }
+
+        }    
         return sb.toString();
     }
 //Affiche les informations générales de la zone.
-public String afficher_zone() {
+/*public String afficher_zone() {
     return "Zone{code=" + code + ", nom='" + nom + '\'' + ", status=" + status + ", nbCapteurs=" + all_capteurs.size() + "}";
-}
+}*/
+
+public abstract String afficher_zone() ; 
 }

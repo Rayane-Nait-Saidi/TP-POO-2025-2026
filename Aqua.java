@@ -1,4 +1,3 @@
-
 public class Aqua extends Zone implements Programmable{
     //Attributs
     private String espece;              // ex: poisson, crevette
@@ -6,8 +5,8 @@ public class Aqua extends Zone implements Programmable{
     private Prog_Ali programme_aliment;
 
     //constructeur
-    public Aqua(int code, String nom, String espece, int number) {
-        super(code, nom);
+    public Aqua(String nom, String espece, int number) {
+        super(nom);
         this.espece = espece;
         this.number = number;
         this.programme_aliment = null;
@@ -53,4 +52,3 @@ public class Aqua extends Zone implements Programmable{
 
     public Prog_Ali getProgramme_aliment() { return programme_aliment; }
 }
-

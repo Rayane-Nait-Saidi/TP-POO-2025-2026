@@ -68,6 +68,10 @@ public class GPS extends Capteur{
         return longitude_max_critique;
     }
 
+    public Hist_Releve_GPS getHist_releve_gps() {
+        return hist_releve_gps;
+    }
+
     public boolean est_hors_avertissement(){
         return (this.latitude < this.latitude_min_avert || this.latitude > this.latitude_max_avert || this.longitude < this.longitude_min_avert || this.longitude > this.longitude_max_avert) ; 
     }

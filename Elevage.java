@@ -2,8 +2,8 @@ import java.util.*;
 public class Elevage extends Zone {
     private Collection<Animal> list_animaux;
     //Constructeur
-    public Elevage(int code, String nom) {
-        super(code, nom);
+    public Elevage(String nom) {
+        super(nom);
         this.list_animaux = new ArrayList<>();
     }
 

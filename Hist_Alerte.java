@@ -15,6 +15,10 @@ public class Hist_Alerte {
         alertes.add(alerte) ;
     }
 
+    public void supprimer_alerte(Alerte alerte){
+        alertes.remove(alerte) ;
+    }
+
     //dipslay the alertes sorted by gravity
     public String display_sorted_alertes(){
         Collections.sort(alertes) ; 

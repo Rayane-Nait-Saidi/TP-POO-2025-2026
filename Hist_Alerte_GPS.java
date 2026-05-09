@@ -15,6 +15,10 @@ public class Hist_Alerte_GPS {
         alertes_gps.add(alerte_gps) ;
     }
 
+    public void supprimer_alerte_gps(Alerte_GPS alerte_gps){
+        alertes_gps.remove(alerte_gps) ;
+    }
+
     //dipslay the alertes sorted by gravity
     public String display_sorted_alertes_gps(){
         Collections.sort(alertes_gps) ; 

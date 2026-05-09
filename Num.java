@@ -46,6 +46,10 @@ public class Num extends Capteur{
         return unite;
     }
 
+    public Hist_Releve getHistorique_releve(){
+        return historique_releve ;
+    }
+
     public boolean est_hors_avertissement(){
         return (this.valeur_actuelle < this.valeur_min_avert || this.valeur_actuelle > this.valeur_max_avert) ; 
     }

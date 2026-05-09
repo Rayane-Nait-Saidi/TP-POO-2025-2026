@@ -3,8 +3,8 @@ public class Culture extends Zone  {
     private Collection<Cult> list_cultures;
 
     //constructeur
-    public Culture(int code, String nom) {
-        super(code, nom);
+    public Culture(String nom) {
+        super(nom);
         this.list_cultures = new ArrayList<>();
     }
 //Ajoute une culture à la zone.

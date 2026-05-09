@@ -10,7 +10,7 @@ public class Hist_Prod {
         return productions ; 
     }
 
-    public void Engistrer_Prod(Prod prod){
+    public void Enregistrer_Prod(Prod prod){
         productions.add(prod) ;
     }
 

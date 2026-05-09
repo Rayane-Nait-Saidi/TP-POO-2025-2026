@@ -3,12 +3,15 @@ import java.util.*;
 public class Ferme implements Activable {
     //attributs
     private Collection<Zone> all_zones;
-    private Collection<Alerte> alertes;
+    //private Collection<Alerte> alertes;
+    private Hist_Alerte alertes;
+    private Hist_Alerte_GPS alertes_gps ;
 
     //constructeur
     public Ferme() {
         this.all_zones = new ArrayList<>();
-        this.alertes = new ArrayList<>();
+        this.alertes = new Hist_Alerte();
+        this.alertes_gps = new Hist_Alerte_GPS() ;
     }
 
     // Ajoute une zone à la ferme.
@@ -40,12 +43,57 @@ public class Ferme implements Activable {
 
 //Gestion des alertes
     //Acquitte une alerte (acknowledge).
+
+public void engistrer_alerte(Alerte a) {
+    alertes.Enregistrer_Alerte(a);
+}
+
+public void engistrer_alerte_gps(Alerte_GPS a) {
+    alertes_gps.Enregistrer_Alerte_GPS(a);
+}
+
+//method that searches for an alerte in alertes
+private boolean find_alerte(Alerte a) {
+    for (Alerte al : alertes.getContent()) {
+        if (al.equals(a)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+//method that searches for an alerte_gps in alertes_gps
+private boolean find_alerte_gps(Alerte_GPS a) {
+    for (Alerte_GPS al : alertes_gps.getContent()) {
+        if (al.equals(a)) {
+            return true;
+        }
+    }
+    return false;
+}
+    
 public void aquitter_alerte(Alerte a) {
-    a.acquitter();
+    if (find_alerte(a)){
+        a.acquitter();
+    }else{
+        System.out.println("Alerte not found in the list of alertes.");
+    }
+}
+
+public void aquitter_alerte_gps(Alerte_GPS a) {
+    if (find_alerte_gps(a)){
+        a.acquitter();
+    }else{
+        System.out.println("Alerte_GPS not found in the list of alertes_gps.");
+    }
 }
 
     public void supprimer_alerte(Alerte a) {
-        alertes.remove(a);
+        alertes.supprimer_alerte(a);
+    }
+
+    public void supprimer_alerte_gps(Alerte_GPS a) {
+        alertes_gps.supprimer_alerte_gps(a);
     }
 
     public void activer() {
@@ -63,7 +111,8 @@ public void aquitter_alerte(Alerte a) {
 //getters
 
     public Collection<Zone> getAll_zones() { return all_zones; }
-    public Collection<Alerte> getAlertes() { return alertes; }
+    public Collection<Alerte> getAlertes() { return alertes.getContent(); }
+    public Collection<Alerte_GPS> getAlertes_GPS() { return alertes_gps.getContent(); }
 
 }
 

@@ -26,8 +26,9 @@ public class Cult {
         this.stade = c;
     }
     //Affiche le stade de croissance actuel
-    public void afficher_stade_croissance() {
-        System.out.println("Stade de croissance : " + stade);
+    public String afficher_stade_croissance() {
+        StringBuilder res = new StringBuilder("Stade de croissance : " + this.stade.toString() + "\n") ;
+        return res.toString();
     }
 //Retourne un résumé de l'état de la culture.
 public String get_etat_cult() {
