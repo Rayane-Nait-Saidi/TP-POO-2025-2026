@@ -9,10 +9,11 @@ public class Animal implements Programmable {
     private Prog_Ali programme_aliment;
     private Collection<Event_Sanitaire> list_event_sanit;
     private GPS collierGPS;
+    private static int cpt = 0 ; 
 
     //constructeur
-    public Animal(int id, int age, Type espece, float poid) {
-        this.id = id;
+    public Animal(int age, Type espece, float poid) {
+        this.id = cpt; cpt++ ;
         this.age = age;
         this.espece = espece;
         this.poid = poid;

@@ -35,10 +35,10 @@ public abstract class Capteur implements Activable{
         this.statut = Stat_Capt.SUSP ; 
     }
 
-    //detect if the captor has reached or supassed the warning threshold!
+    //detect if the captor has reached or supassed the warning frontiere!
     public abstract boolean est_hors_avertissement() ; 
 
-    //detect if the captor has reached or supassed the critical threshold!
+    //detect if the captor has reached or supassed the critical frontiere!
     public abstract boolean est_hors_critique() ; 
     
 }
