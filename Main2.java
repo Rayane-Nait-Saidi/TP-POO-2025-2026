@@ -1,5 +1,12 @@
 import java.util.*;
 import java.time.*;
+import Ferme.*;
+import Zones.*;
+import Entities.*;
+import capteurs.*;
+import releves.*;
+import alertes.*;
+import common.*;
 
 public class Main2 {
     private static final Scanner sc = new Scanner(System.in);
@@ -56,9 +63,6 @@ public class Main2 {
                 case 14:
                     enregistrerReleveManuel();
                     break;
-                case 15:
-                    afficherTableauDeBordReleves();
-                    break;
                 case 16:
                     consulterHistoriqueCapteur();
                     break;
@@ -112,8 +116,7 @@ public class Main2 {
         System.out.println("11. Afficher les programmes alimentaires");
         System.out.println("12. Ajouter / configurer un capteur");
         System.out.println("13. Changer le statut d'un capteur");
-        System.out.println("14. Enregistrer un relevé et générer une alerte");
-        System.out.println("15. Afficher le tableau de bord des relevés");
+        System.out.println("14. Enregistrer un relevé et générer une alerte"); 
         System.out.println("16. Consulter l'historique d'un capteur");
         System.out.println("17. Afficher un graphique des relevés");
         System.out.println("18. Afficher les alertes actives triées");
@@ -135,7 +138,7 @@ public class Main2 {
         Sol sol = new Sol(0, Stat_Capt.ACTIF, culture, 10, 40, 5, 50, 60, "%");
         Env env = new Env(0, Stat_Capt.ACTIF, culture, 15, 30, 10, 40, 25, "C");
         Eau eau = new Eau(0, Stat_Capt.ACTIF, culture, 20, 60, 10, 80, 75, "L");
-        GPS gpsCulture = new GPS(0, Stat_Capt.ACTIF, culture, 0, 100, -10, 110, 0, 100, -10, 110);
+        GPS gpsCulture = new GPS(0, Stat_Capt.ACTIF, culture, 0, 0, 0, 100, -10, 110, 0, 100, -10, 110);
 
         culture.ajouter_capteur(sol);
         culture.ajouter_capteur(env);
@@ -164,14 +167,14 @@ public class Main2 {
         elevage.ajouter_animal(new Animal(12, Type.RUMI, 150));
         elevage.ajouter_animal(new Animal(8, Type.VOL, 3));
 
-        GPS gpsElevage = new GPS(0, Stat_Capt.ACTIF, elevage, 0, 100, -10, 110, 0, 100, -10, 110);
+        GPS gpsElevage = new GPS(0, Stat_Capt.ACTIF, elevage, 0, 0, 0, 100, -10, 110, 0, 100, -10, 110);
         elevage.ajouter_capteur(gpsElevage);
 
         sol.generer_releve();
         env.generer_releve();
         eau.generer_releve();
-        gpsCulture.generer_releve_gps();
-        gpsElevage.generer_releve_gps();
+        gpsCulture.generer_releve();
+        gpsElevage.generer_releve();
 
         fermerAlertesDemo(sol, env, eau, gpsCulture, gpsElevage);
 
@@ -183,29 +186,29 @@ public class Main2 {
     }
 
     private static void fermerAlertesDemo(Num sol, Num env, Num eau, GPS gpsCulture, GPS gpsElevage) {
-        Releve rSol = sol.getHistorique_releve().getContent().isEmpty() ? null : sol.getHistorique_releve().getContent().get(0);
-        if (rSol != null && rSol.getNiveau_Releve() != Niveau_Releve.NORMAL) {
-            ferme.engistrer_alerte(new Alerte(rSol, rSol.getNiveau_Releve() == Niveau_Releve.CRIT ? Gravite.CRIT : Gravite.AVERT));
+        Releve_Generale rSol = sol.getHistorique_releve().getContent().isEmpty() ? null : sol.getHistorique_releve().getContent().get(0);
+        if (rSol != null && rSol.getNiveau_releve() != Niveau_Releve.NORMAL) {
+            ferme.engistrer_alerte(new Alerte(rSol, rSol.getNiveau_releve() == Niveau_Releve.CRIT ? Gravite.CRIT : Gravite.AVERT));
         }
 
-        Releve rEnv = env.getHistorique_releve().getContent().isEmpty() ? null : env.getHistorique_releve().getContent().get(0);
-        if (rEnv != null && rEnv.getNiveau_Releve() != Niveau_Releve.NORMAL) {
-            ferme.engistrer_alerte(new Alerte(rEnv, rEnv.getNiveau_Releve() == Niveau_Releve.CRIT ? Gravite.CRIT : Gravite.AVERT));
+        Releve_Generale rEnv = env.getHistorique_releve().getContent().isEmpty() ? null : env.getHistorique_releve().getContent().get(0);
+        if (rEnv != null && rEnv.getNiveau_releve() != Niveau_Releve.NORMAL) {
+            ferme.engistrer_alerte(new Alerte(rEnv, rEnv.getNiveau_releve() == Niveau_Releve.CRIT ? Gravite.CRIT : Gravite.AVERT));
         }
 
-        Releve rEau = eau.getHistorique_releve().getContent().isEmpty() ? null : eau.getHistorique_releve().getContent().get(0);
-        if (rEau != null && rEau.getNiveau_Releve() != Niveau_Releve.NORMAL) {
-            ferme.engistrer_alerte(new Alerte(rEau, rEau.getNiveau_Releve() == Niveau_Releve.CRIT ? Gravite.CRIT : Gravite.AVERT));
+        Releve_Generale rEau = eau.getHistorique_releve().getContent().isEmpty() ? null : eau.getHistorique_releve().getContent().get(0);
+        if (rEau != null && rEau.getNiveau_releve() != Niveau_Releve.NORMAL) {
+            ferme.engistrer_alerte(new Alerte(rEau, rEau.getNiveau_releve() == Niveau_Releve.CRIT ? Gravite.CRIT : Gravite.AVERT));
         }
 
-        Releve_GPS rGpsCulture = gpsCulture.getHist_releve_gps().getContent().isEmpty() ? null : gpsCulture.getHist_releve_gps().getContent().get(0);
+        Releve_Generale rGpsCulture = gpsCulture.getHist_releve_gps().getContent().isEmpty() ? null : gpsCulture.getHist_releve_gps().getContent().get(0);
         if (rGpsCulture != null && rGpsCulture.getNiveau_releve() != Niveau_Releve.NORMAL) {
-            ferme.engistrer_alerte_gps(new Alerte_GPS(rGpsCulture, rGpsCulture.getNiveau_releve() == Niveau_Releve.CRIT ? Gravite.CRIT : Gravite.AVERT));
+            ferme.engistrer_alerte(new Alerte(rGpsCulture, rGpsCulture.getNiveau_releve() == Niveau_Releve.CRIT ? Gravite.CRIT : Gravite.AVERT));
         }
 
-        Releve_GPS rGpsElevage = gpsElevage.getHist_releve_gps().getContent().isEmpty() ? null : gpsElevage.getHist_releve_gps().getContent().get(0);
+        Releve_Generale rGpsElevage = gpsElevage.getHist_releve_gps().getContent().isEmpty() ? null : gpsElevage.getHist_releve_gps().getContent().get(0);
         if (rGpsElevage != null && rGpsElevage.getNiveau_releve() != Niveau_Releve.NORMAL) {
-            ferme.engistrer_alerte_gps(new Alerte_GPS(rGpsElevage, rGpsElevage.getNiveau_releve() == Niveau_Releve.CRIT ? Gravite.CRIT : Gravite.AVERT));
+            ferme.engistrer_alerte(new Alerte(rGpsElevage, rGpsElevage.getNiveau_releve() == Niveau_Releve.CRIT ? Gravite.CRIT : Gravite.AVERT));
         }
     }
 
@@ -348,20 +351,38 @@ public class Main2 {
     }
 
     private static void definirProgrammeAlimentaire() {
-        Elevage zone = selectionnerZoneElevage();
-        if (zone == null) {
-            return;
-        }
+        int choix = lireInt("Type de zone (1=Elevage, 2=Aquaculture) : ");
+        
+        if (choix == 1) {
+            Elevage zone = selectionnerZoneElevage();
+            if (zone == null) {
+                return;
+            }
 
-        Animal animal = selectionnerAnimal(zone);
-        if (animal == null) {
-            return;
-        }
+            Animal animal = selectionnerAnimal(zone);
+            if (animal == null) {
+                return;
+            }
 
-        String typeAliment = lireTexte("Type d'aliment : ");
-        int quantite = lireInt("Quantité : ");
-        animal.definir_programme(typeAliment, quantite);
-        System.out.println("Programme alimentaire défini.");
+            String typeAliment = lireTexte("Type d'aliment : ");
+            int quantite = lireInt("Quantité : ");
+            animal.definir_programme(typeAliment, quantite);
+            System.out.println("Programme alimentaire défini pour l'animal.");
+        } else if (choix == 2) {
+            Zone zone = selectionnerZone();
+            if (!(zone instanceof Aqua)) {
+                System.out.println("Veuillez sélectionner une zone aquaculture.");
+                return;
+            }
+            Aqua aqua = (Aqua) zone;
+            
+            String typeAliment = lireTexte("Type d'aliment : ");
+            int quantite = lireInt("Quantité : ");
+            aqua.definir_programme(typeAliment, quantite);
+            System.out.println("Programme alimentaire défini pour l'aquaculture.");
+        } else {
+            System.out.println("Choix invalide.");
+        }
     }
 
     private static void afficherProgrammesAlimentaires() {
@@ -449,6 +470,8 @@ public class Main2 {
             System.out.println("Capteur numérique ajouté.");
 
         } else if (type == 2) {
+            float latitude = lireFloat("Latitude actuelle : ");
+            float longitude = lireFloat("Longitude actuelle : ");
             float latMinAvert = lireFloat("Latitude avertissement min : ");
             float latMaxAvert = lireFloat("Latitude avertissement max : ");
             float latMinCrit = lireFloat("Latitude critique min : ");
@@ -459,7 +482,8 @@ public class Main2 {
             float lonMaxCrit = lireFloat("Longitude critique max : ");
 
             GPS gps = new GPS(0, Stat_Capt.ACTIF, zone,
-                    latMinAvert, latMaxAvert, latMinCrit, latMaxCrit,
+            latitude, longitude,
+            latMinAvert, latMaxAvert, latMinCrit, latMaxCrit,
                     lonMinAvert, lonMaxAvert, lonMinCrit, lonMaxCrit);
             zone.ajouter_capteur(gps);
             System.out.println("Capteur GPS ajouté.");
@@ -472,6 +496,12 @@ public class Main2 {
     private static void changerStatutCapteur() {
         Capteur capteur = selectionnerCapteur();
         if (capteur == null) {
+            return;
+        }
+
+        Zone zone = capteur.getZone();
+        if (zone.getStatus() != STATUS.ACTIF) {
+            System.out.println("La zone est suspendue. Impossible de modifier le statut du capteur.");
             return;
         }
 
@@ -492,15 +522,17 @@ public class Main2 {
 
     private static void enregistrerReleveManuel() {
         int type = lireInt("Type capteur (1=Numérique, 2=GPS) : ");
-        LocalDate date = lireDate("Date du relevé (aaaa-mm-jj) : ");
 
         if (type == 1) {
             Num capteur = selectionnerCapteurNumerique();
             if (capteur == null) {
                 return;
             }
-            Releve releve = new Releve(date, capteur.getValeur_actuelle(), capteur.getUnite(), capteur);
-            capteur.getHistorique_releve().Enregistrer_Releve(releve);
+            if (capteur.getStatut() != Stat_Capt.ACTIF) {
+                System.out.println("Le capteur n'est pas actif. Impossible d'enregistrer un relevé.");
+                return;
+            }
+            Releve_Generale releve = capteur.generer_releve();
             enregistrerAlerteSiBesoin(releve);
             System.out.println("Relevé numérique enregistré.");
 
@@ -509,8 +541,11 @@ public class Main2 {
             if (capteur == null) {
                 return;
             }
-            Releve_GPS releve = new Releve_GPS(date, capteur.getLatitude(), capteur.getLongitude(), capteur);
-            capteur.getHist_releve_gps().Enregistrer_Releve_GPS(releve);
+            if (capteur.getStatut() != Stat_Capt.ACTIF) {
+                System.out.println("Le capteur n'est pas actif. Impossible d'enregistrer un relevé.");
+                return;
+            }
+            Releve_Generale releve = capteur.generer_releve();
             enregistrerAlerteSiBesoin(releve);
             System.out.println("Relevé GPS enregistré.");
 
@@ -519,46 +554,21 @@ public class Main2 {
         }
     }
 
-    private static void enregistrerAlerteSiBesoin(Releve releve) {
-        if (releve.getNiveau_Releve() == Niveau_Releve.CRIT) {
+    private static void enregistrerAlerteSiBesoin(Releve_Generale releve) {
+        if (releve.getNiveau_releve() == Niveau_Releve.CRIT) {
             ferme.engistrer_alerte(new Alerte(releve, Gravite.CRIT));
-        } else if (releve.getNiveau_Releve() == Niveau_Releve.AVERT) {
+        } else if (releve.getNiveau_releve() == Niveau_Releve.AVERT) {
             ferme.engistrer_alerte(new Alerte(releve, Gravite.AVERT));
         }
     }
 
-    private static void enregistrerAlerteSiBesoin(Releve_GPS releve) {
+    /*private static void enregistrerAlerteSiBesoinGPS(Releve_GPS releve) {
         if (releve.getNiveau_releve() == Niveau_Releve.CRIT) {
-            ferme.engistrer_alerte_gps(new Alerte_GPS(releve, Gravite.CRIT));
+            ferme.engistrer_alerte(new Alerte(releve, Gravite.CRIT));
         } else if (releve.getNiveau_releve() == Niveau_Releve.AVERT) {
-            ferme.engistrer_alerte_gps(new Alerte_GPS(releve, Gravite.AVERT));
+            ferme.engistrer_alerte(new Alerte(releve, Gravite.AVERT));
         }
-    }
-
-    private static void afficherTableauDeBordReleves() {
-        for (Zone zone : ferme.getAll_zones()) {
-            System.out.println("\n=== Tableau de bord - " + zone.getNom() + " ===");
-            if (zone.getAll_capteurs().isEmpty()) {
-                System.out.println("Aucun capteur.");
-                continue;
-            }
-
-            for (Capteur capteur : zone.getAll_capteurs()) {
-                if (capteur instanceof Num) {
-                    Num num = (Num) capteur;
-                    Releve releve = new Releve(LocalDate.now(), num.getValeur_actuelle(), num.getUnite(), num);
-                    System.out.println(decrireNiveau(releve.getNiveau_Releve()) + " Capteur #" + num.getCode()
-                            + " " + capteur.getClass().getSimpleName()
-                            + " -> " + num.getValeur_actuelle() + " " + num.getUnite());
-                } else if (capteur instanceof GPS) {
-                    GPS gps = (GPS) capteur;
-                    Releve_GPS releve = new Releve_GPS(LocalDate.now(), gps.getLatitude(), gps.getLongitude(), gps);
-                    System.out.println(decrireNiveau(releve.getNiveau_releve()) + " Capteur #" + gps.getCode()
-                            + " GPS -> lat=" + gps.getLatitude() + ", lon=" + gps.getLongitude());
-                }
-            }
-        }
-    }
+    }*/
 
     private static void consulterHistoriqueCapteur() {
         int type = lireInt("Type capteur (1=Numérique, 2=GPS) : ");
@@ -576,7 +586,7 @@ public class Main2 {
             if (capteur == null) {
                 return;
             }
-            System.out.println(capteur.getHist_releve_gps().display_releves_gps(date1, date2));
+            System.out.println(capteur.getHistorique_releve().display_releves(date1, date2));
         } else {
             System.out.println("Type invalide.");
         }
@@ -604,7 +614,7 @@ public class Main2 {
     private static void afficherGraphiqueCapteur(Capteur capteur) {
         if (capteur instanceof Num) {
             Num num = (Num) capteur;
-            List<Releve> releves = num.getHistorique_releve().getContent();
+            List<Releve_Generale> releves = num.getHistorique_releve().getContent();
             if (releves.isEmpty()) {
                 System.out.println("Aucun relevé.");
                 return;
@@ -612,27 +622,36 @@ public class Main2 {
 
             float min = Float.MAX_VALUE;
             float max = Float.MIN_VALUE;
-            for (Releve releve : releves) {
-                min = Math.min(min, releve.getValeur());
-                max = Math.max(max, releve.getValeur());
+            for (Releve_Generale releve : releves) {
+                if (releve instanceof Releve) {
+                    Releve r = (Releve) releve;
+                    min = Math.min(min, r.getValeur());
+                    max = Math.max(max, r.getValeur());
+                }
             }
 
             System.out.println("=== Graphique relevés capteur #" + num.getCode() + " ===");
-            for (Releve releve : releves) {
-                System.out.println(formatGraphLine(releve.getDate().toString(), releve.getValeur(), num.getUnite(), releve.getNiveau_Releve(), min, max));
+            for (Releve_Generale releve : releves) {
+                if (releve instanceof Releve) {
+                    Releve r = (Releve) releve;
+                    System.out.println(formatGraphLine(r.getDate().toString(), r.getValeur(), r.getUnite(), r.getNiveau_releve(), min, max));
+                }
             }
         } else if (capteur instanceof GPS) {
             GPS gps = (GPS) capteur;
-            List<Releve_GPS> releves = gps.getHist_releve_gps().getContent();
+            List<Releve_Generale> releves = gps.getHistorique_releve().getContent();
             if (releves.isEmpty()) {
                 System.out.println("Aucun relevé.");
                 return;
             }
 
             System.out.println("=== Graphique relevés GPS #" + gps.getCode() + " ===");
-            for (Releve_GPS releve : releves) {
-                float score = Math.abs(releve.getLatitude()) + Math.abs(releve.getLongitude());
-                System.out.println(formatGraphLine(releve.getDate().toString(), score, "coord", releve.getNiveau_releve(), 0, 200));
+            for (Releve_Generale releve : releves) {
+                if (releve instanceof Releve_GPS) {
+                    Releve_GPS r = (Releve_GPS) releve;
+                    float score = Math.abs(r.getLatitude()) + Math.abs(r.getLongitude());
+                    System.out.println(formatGraphLine(r.getDate().toString(), score, "coord", r.getNiveau_releve(), 0, 200));
+                }
             }
         }
     }
@@ -650,66 +669,22 @@ public class Main2 {
     }
 
     private static void afficherAlertesActives() {
-        List<Alerte> alertes = new ArrayList<>(ferme.getAlertes());
-        List<Alerte_GPS> alertesGps = new ArrayList<>(ferme.getAlertes_GPS());
-        Collections.sort(alertes);
-        Collections.sort(alertesGps);
-
-        System.out.println("=== Alertes actives ===");
-        int index = 1;
-        for (Alerte alerte : alertes) {
-            if (!alerte.isAcquitted()) {
-                System.out.println("[#" + index + "] " + alerte.getGravite());
-                System.out.println(alerte.display_alerte());
-            }
-            index++;
-        }
-
-        index = 1;
-        for (Alerte_GPS alerte : alertesGps) {
-            if (!alerte.isAcquitted()) {
-                System.out.println("[GPS #" + index + "] " + alerte.getGravite());
-                System.out.println(alerte.display_alerte_gps());
-            }
-            index++;
-        }
+        System.out.println(ferme.getHist_alertes().display_sorted_alertes());
     }
 
     private static void acquitterAlerte() {
-        int type = lireInt("Type alerte (1=Numérique, 2=GPS) : ");
-        if (type == 1) {
-            Alerte alerte = selectionnerAlerteNumerique();
-            if (alerte != null) {
-                ferme.aquitter_alerte(alerte);
-                System.out.println("Alerte acquittée.");
-            }
-        } else if (type == 2) {
-            Alerte_GPS alerte = selectionnerAlerteGPS();
-            if (alerte != null) {
-                ferme.aquitter_alerte_gps(alerte);
-                System.out.println("Alerte GPS acquittée.");
-            }
-        } else {
-            System.out.println("Choix invalide.");
+        Alerte alerte = selectionnerAlerteNumerique();
+        if (alerte != null) {
+            ferme.aquitter_alerte(alerte);
+            System.out.println("Alerte acquittée.");
         }
     }
 
     private static void supprimerAlerte() {
-        int type = lireInt("Type alerte (1=Numérique, 2=GPS) : ");
-        if (type == 1) {
-            Alerte alerte = selectionnerAlerteNumerique();
-            if (alerte != null) {
-                ferme.supprimer_alerte(alerte);
-                System.out.println("Alerte supprimée.");
-            }
-        } else if (type == 2) {
-            Alerte_GPS alerte = selectionnerAlerteGPS();
-            if (alerte != null) {
-                ferme.supprimer_alerte_gps(alerte);
-                System.out.println("Alerte GPS supprimée.");
-            }
-        } else {
-            System.out.println("Choix invalide.");
+        Alerte alerte = selectionnerAlerteNumerique();
+        if (alerte != null) {
+            ferme.supprimer_alerte(alerte);
+            System.out.println("Alerte supprimée.");
         }
     }
 
@@ -719,13 +694,11 @@ public class Main2 {
             return;
         }
 
-        LocalDate date = lireDate("Date (aaaa-mm-jj) : ");
-        LocalTime heure = lireHeure("Heure (HH:mm) : ");
         Type_Prod type = lireTypeProduction();
         int quantite = lireInt("Quantité : ");
         String unite = lireTexte("Unité : ");
 
-        zone.ajouter_prod(new Prod(date, heure, type, quantite, unite));
+        zone.ajouter_prod(new Prod(LocalDate.now(), LocalTime.now(), type, quantite, unite));
         System.out.println("Production enregistrée.");
     }
 
@@ -823,17 +796,19 @@ public class Main2 {
             return null;
         }
 
-        for (int i = 0; i < animaux.size(); i++) {
-            System.out.println((i + 1) + ". " + animaux.get(i));
+        for (Animal animal : animaux) {
+            System.out.println(animal);
         }
 
-        int choix = lireInt("Choix de l'animal : ");
-        if (choix < 1 || choix > animaux.size()) {
-            System.out.println("Choix invalide.");
-            return null;
+        int id = lireInt("Id de l'animal : ");
+        for (Animal animal : animaux) {
+            if (animal.getId() == id) {
+                return animal;
+            }
         }
 
-        return animaux.get(choix - 1);
+        System.out.println("Animal introuvable.");
+        return null;
     }
 
     private static Num selectionnerCapteurNumerique() {
@@ -851,18 +826,19 @@ public class Main2 {
             return null;
         }
 
-        for (int i = 0; i < capteurs.size(); i++) {
-            Num capteur = capteurs.get(i);
-            System.out.println((i + 1) + ". Capteur #" + capteur.getCode() + " - " + capteur.getZone().getNom() + " - " + capteur.getClass().getSimpleName());
+        for (Num capteur : capteurs) {
+            afficherCapteurSelection(capteur);
         }
 
-        int choix = lireInt("Choix du capteur : ");
-        if (choix < 1 || choix > capteurs.size()) {
-            System.out.println("Choix invalide.");
-            return null;
+        int code = lireInt("Code du capteur : ");
+        for (Num capteur : capteurs) {
+            if (capteur.getCode() == code) {
+                return capteur;
+            }
         }
 
-        return capteurs.get(choix - 1);
+        System.out.println("Capteur introuvable.");
+        return null;
     }
 
     private static GPS selectionnerCapteurGPS() {
@@ -880,18 +856,19 @@ public class Main2 {
             return null;
         }
 
-        for (int i = 0; i < capteurs.size(); i++) {
-            GPS capteur = capteurs.get(i);
-            System.out.println((i + 1) + ". Capteur #" + capteur.getCode() + " - " + capteur.getZone().getNom());
+        for (GPS capteur : capteurs) {
+            afficherCapteurSelection(capteur);
         }
 
-        int choix = lireInt("Choix du capteur : ");
-        if (choix < 1 || choix > capteurs.size()) {
-            System.out.println("Choix invalide.");
-            return null;
+        int code = lireInt("Code du capteur : ");
+        for (GPS capteur : capteurs) {
+            if (capteur.getCode() == code) {
+                return capteur;
+            }
         }
 
-        return capteurs.get(choix - 1);
+        System.out.println("Capteur introuvable.");
+        return null;
     }
 
     private static Capteur selectionnerCapteur() {
@@ -907,16 +884,20 @@ public class Main2 {
         return null;
     }
 
+    private static void afficherCapteurSelection(Capteur capteur) {
+        String resume = capteur.display_capteur().trim().replace("\n", " ");
+        System.out.println(resume + " | Type : " + capteur.getClass().getSimpleName());
+        System.out.println("\n");
+    }
+
     private static Alerte selectionnerAlerteNumerique() {
         List<Alerte> alertes = new ArrayList<>();
         for (Alerte alerte : ferme.getAlertes()) {
-            if (!alerte.isAcquitted()) {
-                alertes.add(alerte);
-            }
+            alertes.add(alerte);
         }
 
         if (alertes.isEmpty()) {
-            System.out.println("Aucune alerte numérique active.");
+            System.out.println("Aucune alerte disponible.");
             return null;
         }
 
@@ -924,34 +905,6 @@ public class Main2 {
         for (int i = 0; i < alertes.size(); i++) {
             System.out.println((i + 1) + ". " + alertes.get(i).getGravite());
             System.out.println(alertes.get(i).display_alerte());
-        }
-
-        int choix = lireInt("Choix de l'alerte : ");
-        if (choix < 1 || choix > alertes.size()) {
-            System.out.println("Choix invalide.");
-            return null;
-        }
-
-        return alertes.get(choix - 1);
-    }
-
-    private static Alerte_GPS selectionnerAlerteGPS() {
-        List<Alerte_GPS> alertes = new ArrayList<>();
-        for (Alerte_GPS alerte : ferme.getAlertes_GPS()) {
-            if (!alerte.isAcquitted()) {
-                alertes.add(alerte);
-            }
-        }
-
-        if (alertes.isEmpty()) {
-            System.out.println("Aucune alerte GPS active.");
-            return null;
-        }
-
-        Collections.sort(alertes);
-        for (int i = 0; i < alertes.size(); i++) {
-            System.out.println((i + 1) + ". " + alertes.get(i).getGravite());
-            System.out.println(alertes.get(i).display_alerte_gps());
         }
 
         int choix = lireInt("Choix de l'alerte : ");
