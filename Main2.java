@@ -592,22 +592,7 @@ public class Main2 {
     }
 
     private static void afficherGraphique() {
-        int type = lireInt("Graphique par (1=Capteur, 2=Zone) : ");
-        if (type == 1) {
-            Capteur capteur = selectionnerCapteur();
-            if (capteur == null) {
-                return;
-            }
-            afficherGraphiqueCapteur(capteur);
-        } else if (type == 2) {
-            Zone zone = selectionnerZone();
-            if (zone == null) {
-                return;
-            }
-            afficherGraphiqueZone(zone);
-        } else {
-            System.out.println("Choix invalide.");
-        }
+        System.out.println("pas encore implémenté!") ;
     }
 
     private static void afficherGraphiqueCapteur(Capteur capteur) {
