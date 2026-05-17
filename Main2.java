@@ -6,7 +6,6 @@ import Entities.*;
 import capteurs.*;
 import releves.*;
 import alertes.*;
-import common.*;
 
 public class Main2 {
     private static final Scanner sc = new Scanner(System.in);
@@ -86,7 +85,7 @@ public class Main2 {
                     break;
                 case 0:
                     quitter = true;
-                    System.out.println("Fin du programme.");
+                    System.out.println("Merci d'avoir utilisé notre système .. Au revoir!!!");
                     break;
                 default:
                     System.out.println("Choix invalide.");
@@ -397,7 +396,7 @@ public class Main2 {
                 for (Animal animal : elevage.getList_animaux()) {
                     System.out.println("\n┌─ Animal #" + animal.getId() + " ─────────────────────────────────┐");
                     System.out.println("│ Espèce : " + animal.getEspece());
-                    System.out.println("│ Âge : " + animal.getAge() + " ans");
+                    System.out.println("│ Âge : " + animal.getAge() + " moins");
                     System.out.println("│ Poids : " + animal.getPoid() + " kg");
                     System.out.println("│ État de santé : " + animal.getEtat_sante());
                     System.out.println("│");
@@ -694,12 +693,21 @@ public class Main2 {
             return;
         }
 
-        Type_Prod type = lireTypeProduction();
-        int quantite = lireInt("Quantité : ");
-        String unite = lireTexte("Unité : ");
+        if (zone.getStatus() != STATUS.ACTIF) {
+            System.out.println("La zone est suspendue. Impossible d'enregistrer une production.");
+            return;
+        }
 
-        zone.ajouter_prod(new Prod(LocalDate.now(), LocalTime.now(), type, quantite, unite));
-        System.out.println("Production enregistrée.");
+        Type_Prod type = lireTypeProduction();
+        if ((zone instanceof Elevage && (type == Type_Prod.LAIT || type == Type_Prod.OEUF)) || (zone instanceof Culture && (type == Type_Prod.RECOLTE || type == Type_Prod.REND_CULT))) {
+           int quantite = lireInt("Quantité : ");
+           String unite = lireTexte("Unité : ");
+
+           zone.ajouter_prod(new Prod(LocalDate.now(), LocalTime.now(), type, quantite, unite));
+           System.out.println("Production enregistrée.");
+        }else{
+            System.out.println("Type de production imcompatible avec le type de la zone choisie!!") ; 
+        }
     }
 
     private static void afficherHistoriqueProductions() {
