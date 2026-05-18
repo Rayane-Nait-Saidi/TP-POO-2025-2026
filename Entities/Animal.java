@@ -89,5 +89,8 @@ public class Animal implements Programmable {
         return sb.toString();
     }
 
+    public void setCollierGPS(GPS collierGPS) {
+        this.collierGPS = collierGPS ; 
+    }
 
 }

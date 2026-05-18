@@ -116,7 +116,7 @@ public class Main2 {
         System.out.println("12. Ajouter / configurer un capteur");
         System.out.println("13. Changer le statut d'un capteur");
         System.out.println("14. Enregistrer un relevé et générer une alerte"); 
-        System.out.println("16. Consulter l'historique d'un capteur");
+        System.out.println("16. Consulter l'historique des releves d'un capteur entre deux dates");
         System.out.println("17. Afficher un graphique des relevés");
         System.out.println("18. Afficher les alertes actives triées");
         System.out.println("19. Acquitter une alerte");
@@ -269,13 +269,35 @@ public class Main2 {
             return;
         }
 
-        LocalDate plantation = lireDate("Date de plantation (aaaa-mm-jj) : ");
-        LocalDate recolte = lireDate("Date de récolte (aaaa-mm-jj) : ");
+        LocalDate plantation;
+        while (true) {
+            plantation = lireDate("Date de plantation (aaaa-mm-jj) : ");
+            if (!plantation.isAfter(LocalDate.now())) break;
+            System.out.println("Erreur: la date de plantation ne doit pas être après aujourd'hui. Veuillez réessayer.");
+        }
+
+        LocalDate recolte;
+        while (true) {
+            recolte = lireDate("Date de récolte (aaaa-mm-jj) : ");
+            if (recolte.isAfter(plantation)) break;
+            System.out.println("Erreur: la date de récolte doit être strictement après la date de plantation. Veuillez réessayer.");
+        }
         Famille famille = lireFamille();
         float minPh = lireFloat("pH min : ");
-        float maxPh = lireFloat("pH max : ");
+        float maxPh;
+        while (true) {
+            maxPh = lireFloat("pH max : ");
+            if (minPh < maxPh) break;
+            System.out.println("Erreur: pH max doit être strictement supérieur à pH min. Veuillez réessayer.");
+        }
+
         float minHum = lireFloat("Humidité min : ");
-        float maxHum = lireFloat("Humidité max : ");
+        float maxHum;
+        while (true) {
+            maxHum = lireFloat("Humidité max : ");
+            if (minHum < maxHum) break;
+            System.out.println("Erreur: Humidité max doit être strictement supérieur à Humidité min. Veuillez réessayer.");
+        }
 
         zone.ajouter_culture(new Cult(plantation, recolte, famille, minPh, maxPh, minHum, maxHum));
         System.out.println("Culture ajoutée.");
@@ -350,15 +372,15 @@ public class Main2 {
     }
 
     private static void definirProgrammeAlimentaire() {
-        int choix = lireInt("Type de zone (1=Elevage, 2=Aquaculture) : ");
-        
-        if (choix == 1) {
-            Elevage zone = selectionnerZoneElevage();
-            if (zone == null) {
-                return;
-            }
+        Zone zone = selectionnerZone();
+        if (zone == null) {
+            return;
+        }
 
-            Animal animal = selectionnerAnimal(zone);
+        if (zone instanceof Elevage) {
+            Elevage elevage = (Elevage) zone;
+
+            Animal animal = selectionnerAnimal(elevage);
             if (animal == null) {
                 return;
             }
@@ -367,20 +389,15 @@ public class Main2 {
             int quantite = lireInt("Quantité : ");
             animal.definir_programme(typeAliment, quantite);
             System.out.println("Programme alimentaire défini pour l'animal.");
-        } else if (choix == 2) {
-            Zone zone = selectionnerZone();
-            if (!(zone instanceof Aqua)) {
-                System.out.println("Veuillez sélectionner une zone aquaculture.");
-                return;
-            }
+        } else if (zone instanceof Aqua) {
             Aqua aqua = (Aqua) zone;
-            
+
             String typeAliment = lireTexte("Type d'aliment : ");
             int quantite = lireInt("Quantité : ");
             aqua.definir_programme(typeAliment, quantite);
             System.out.println("Programme alimentaire défini pour l'aquaculture.");
         } else {
-            System.out.println("Choix invalide.");
+            System.out.println("La zone choisie n'est ni un élevage ni une aquaculture.");
         }
     }
 
@@ -431,7 +448,7 @@ public class Main2 {
         }
 
         if (!trouve) {
-            System.out.println("\n⚠️  Aucune zone d'élevage ou aquaculture disponible.");
+            System.out.println("\n  Aucune zone d'élevage ou aquaculture disponible.");
         }
     }
 
@@ -442,11 +459,29 @@ public class Main2 {
             return;
         }
 
+        //comme chaque animal a un collierGPS , donc quand l'usager choisit 2-GPS , on lui affecte à un animal
         if (type == 1) {
             float minAvert = lireFloat("Seuil avertissement min : ");
-            float maxAvert = lireFloat("Seuil avertissement max : ");
+            float maxAvert;
+            while (true) {
+                maxAvert = lireFloat("Seuil avertissement max : ");
+                if (minAvert < maxAvert) break;
+                System.out.println("Erreur: Seuil avertissement max doit être strictement supérieur au min. Veuillez réessayer.");
+            }
+
             float minCrit = lireFloat("Seuil critique min : ");
-            float maxCrit = lireFloat("Seuil critique max : ");
+            while (true) {
+                if (minCrit < minAvert) break;
+                System.out.println("Erreur: Seuil critique min doit être strictement inférieur au Seuil avertissement min. Veuillez réessayer.");
+                minCrit = lireFloat("Seuil critique min : ");
+            }
+            float maxCrit;
+            while (true) {
+                maxCrit = lireFloat("Seuil critique max : ");
+                if (minCrit < maxCrit && maxCrit > maxAvert) break;
+                System.out.println("Erreur: Seuil critique max doit être strictement supérieur au Seuil avertissement max et > Seuil critique min. Veuillez réessayer.");
+            }
+
             float valeur = lireFloat("Valeur actuelle : ");
             String unite = lireTexte("Unité : ");
             int typeNum = lireInt("Sous-type (1=Sol, 2=Env, 3=Eau, 4=Bio) : ");
@@ -468,24 +503,67 @@ public class Main2 {
             zone.ajouter_capteur(capteur);
             System.out.println("Capteur numérique ajouté.");
 
-        } else if (type == 2) {
+        } else if (type == 2 && zone instanceof Elevage) {
+            //on accede aux animaux de cette zone d'elevage pour que l'usager puisse choisir à quel animal il veut affecter le capteur GPS
+            Animal animal = selectionnerAnimal((Elevage)zone) ; 
+            if (animal == null) {
+                return ; 
+            }
+
+
+
             float latitude = lireFloat("Latitude actuelle : ");
             float longitude = lireFloat("Longitude actuelle : ");
+
             float latMinAvert = lireFloat("Latitude avertissement min : ");
-            float latMaxAvert = lireFloat("Latitude avertissement max : ");
+            float latMaxAvert;
+            while (true) {
+                latMaxAvert = lireFloat("Latitude avertissement max : ");
+                if (latMinAvert < latMaxAvert) break;
+                System.out.println("Erreur: Latitude avertissement max doit être strictement supérieur au min. Veuillez réessayer.");
+            }
+
             float latMinCrit = lireFloat("Latitude critique min : ");
-            float latMaxCrit = lireFloat("Latitude critique max : ");
+            while (true) {
+                if (latMinCrit < latMinAvert) break;
+                System.out.println("Erreur: Latitude critique min doit être strictement inférieur à la Latitude avertissement min. Veuillez réessayer.");
+                latMinCrit = lireFloat("Latitude critique min : ");
+            }
+            float latMaxCrit;
+            while (true) {
+                latMaxCrit = lireFloat("Latitude critique max : ");
+                if (latMinCrit < latMaxCrit && latMaxCrit > latMaxAvert) break;
+                System.out.println("Erreur: Latitude critique max doit être strictement supérieur à la Latitude avertissement max et > Latitude critique min. Veuillez réessayer.");
+            }
+
             float lonMinAvert = lireFloat("Longitude avertissement min : ");
-            float lonMaxAvert = lireFloat("Longitude avertissement max : ");
+            float lonMaxAvert;
+            while (true) {
+                lonMaxAvert = lireFloat("Longitude avertissement max : ");
+                if (lonMinAvert < lonMaxAvert) break;
+                System.out.println("Erreur: Longitude avertissement max doit être strictement supérieur au min. Veuillez réessayer.");
+            }
+
             float lonMinCrit = lireFloat("Longitude critique min : ");
-            float lonMaxCrit = lireFloat("Longitude critique max : ");
+            while (true) {
+                if (lonMinCrit < lonMinAvert) break;
+                System.out.println("Erreur: Longitude critique min doit être strictement inférieur à la Longitude avertissement min. Veuillez réessayer.");
+                lonMinCrit = lireFloat("Longitude critique min : ");
+            }
+            float lonMaxCrit;
+            while (true) {
+                lonMaxCrit = lireFloat("Longitude critique max : ");
+                if (lonMinCrit < lonMaxCrit && lonMaxCrit > lonMaxAvert) break;
+                System.out.println("Erreur: Longitude critique max doit être strictement supérieur à la Longitude avertissement max et > Longitude critique min. Veuillez réessayer.");
+            }
 
             GPS gps = new GPS(0, Stat_Capt.ACTIF, zone,
-            latitude, longitude,
-            latMinAvert, latMaxAvert, latMinCrit, latMaxCrit,
+                    latitude, longitude,
+                    latMinAvert, latMaxAvert, latMinCrit, latMaxCrit,
                     lonMinAvert, lonMaxAvert, lonMinCrit, lonMaxCrit);
             zone.ajouter_capteur(gps);
-            System.out.println("Capteur GPS ajouté.");
+            animal.setCollierGPS(gps);
+            System.out.println("Capteur GPS ajouté et affecté à l'animal choisi!");
 
         } else {
             System.out.println("Type de capteur invalide.");
@@ -572,7 +650,12 @@ public class Main2 {
     private static void consulterHistoriqueCapteur() {
         int type = lireInt("Type capteur (1=Numérique, 2=GPS) : ");
         LocalDate date1 = lireDate("Date début (aaaa-mm-jj) : ");
-        LocalDate date2 = lireDate("Date fin (aaaa-mm-jj) : ");
+        LocalDate date2;
+        while (true) {
+            date2 = lireDate("Date fin (aaaa-mm-jj) : ");
+            if (date2.isAfter(date1)) break;
+            System.out.println("Erreur: la date fin doit être strictement après la date début. Veuillez réessayer.");
+        }
 
         if (type == 1) {
             Num capteur = selectionnerCapteurNumerique();
@@ -735,6 +818,10 @@ public class Main2 {
     private static Culture selectionnerZoneCulture() {
         Zone zone = selectionnerZone();
         if (zone instanceof Culture) {
+            if (zone.getStatus() != STATUS.ACTIF) {
+                System.out.println("Cette zone culture est suspendue. Impossible d'effectuer cette opération.");
+                return null;
+            }
             return (Culture) zone;
         }
         if (zone != null) {
