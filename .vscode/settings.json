@@ -3,13 +3,12 @@
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "c:\\java21\\javafx-sdk-21.0.11\\lib\\javafx.base.jar",
-        "c:\\java21\\javafx-sdk-21.0.11\\lib\\javafx.controls.jar",
-        "c:\\java21\\javafx-sdk-21.0.11\\lib\\javafx.fxml.jar",
-        "c:\\java21\\javafx-sdk-21.0.11\\lib\\javafx.graphics.jar",
-        "c:\\java21\\javafx-sdk-21.0.11\\lib\\javafx.media.jar",
-        "c:\\java21\\javafx-sdk-21.0.11\\lib\\javafx.swing.jar",
-        "c:\\java21\\javafx-sdk-21.0.11\\lib\\javafx.web.jar",
-        "c:\\java21\\javafx-sdk-21.0.11\\lib\\javafx-swt.jar"
+        "C:\\Program Files\\BlueJ\\lib\\javafx-base-23.0.2-win.jar",
+        "C:\\Program Files\\BlueJ\\lib\\javafx-controls-23.0.2-win.jar",
+        "C:\\Program Files\\BlueJ\\lib\\javafx-fxml-23.0.2-win.jar",
+        "C:\\Program Files\\BlueJ\\lib\\javafx-graphics-23.0.2-win.jar",
+        "C:\\Program Files\\BlueJ\\lib\\javafx-media-23.0.2-win.jar",
+        "C:\\Program Files\\BlueJ\\lib\\javafx-swing-23.0.2-win.jar",
+        "C:\\Program Files\\BlueJ\\lib\\javafx-web-23.0.2-win.jar"
     ]
 }
